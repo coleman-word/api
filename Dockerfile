@@ -64,10 +64,14 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 RUN go get \
     github.com/goadesign/goa/goagen/gen_app
     
-COPY . $GOPATH/src/api-cli
-WORKDIR $GOPATH/src/api-cli
+COPY . $GOPATH/src/api
+WORKDIR $GOPATH/src/api
+RUN go get -v \
+	github.com/goadesign/goa 
+	
+RUN goagen bootstrap -d github.com/coleman-word/api/design
+
 RUN go build \
     api-cli/design \
     && tools/api-cli
-
-ENTRYPOINT ""
+CMD "xargs api-cli"
